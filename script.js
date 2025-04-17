@@ -22,33 +22,43 @@ function register() {
 function sendMessage() {
   const text = document.getElementById("message-input").value;
   if (!text) return;
-
   db.collection("messages").add({
     user: username,
     text: text,
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
-
   document.getElementById("message-input").value = "";
 }
 
 function listenMessages() {
+  const container = document.getElementById("messages");
+
   db.collection("messages")
     .orderBy("timestamp")
     .onSnapshot(snapshot => {
-      const container = document.getElementById("messages");
-      container.innerHTML = "";
-
-      snapshot.docs.forEach(doc => {
-        const data = doc.data();
-        const color = colors[data.user] || (colors[data.user] = getRandomColor());
-
-        const div = document.createElement("div");
-        div.innerHTML = `<span class="username" style="color:${color}">${data.user}:</span> ${data.text}`;
-        container.appendChild(div);
+      const shownIds = new Set();
+      container.childNodes.forEach(child => {
+        if (child.dataset && child.dataset.id) {
+          shownIds.add(child.dataset.id);
+        }
       });
 
-      container.scrollTop = container.scrollHeight;
+      snapshot.docChanges().forEach(change => {
+        if (change.type === "added") {
+          const doc = change.doc;
+          const data = doc.data();
+          const docId = doc.id;
+
+          if (shownIds.has(docId)) return;
+
+          const color = colors[data.user] || (colors[data.user] = getRandomColor());
+          const div = document.createElement("div");
+          div.dataset.id = docId;
+          div.innerHTML = `<span class="username" style="color:${color}">${data.user}:</span> ${data.text}`;
+          container.appendChild(div);
+          container.scrollTop = container.scrollHeight;
+        }
+      });
     });
 }
 
