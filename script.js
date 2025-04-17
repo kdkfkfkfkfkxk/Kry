@@ -22,11 +22,13 @@ function register() {
 function sendMessage() {
   const text = document.getElementById("message-input").value;
   if (!text) return;
+
   db.collection("messages").add({
     user: username,
     text: text,
     timestamp: firebase.firestore.FieldValue.serverTimestamp()
   });
+
   document.getElementById("message-input").value = "";
 }
 
@@ -34,22 +36,19 @@ function listenMessages() {
   db.collection("messages")
     .orderBy("timestamp")
     .onSnapshot(snapshot => {
-      document.getElementById("messages").innerHTML = "";
+      const container = document.getElementById("messages");
+      container.innerHTML = "";
+
       snapshot.docs.forEach(doc => {
         const data = doc.data();
         const color = colors[data.user] || (colors[data.user] = getRandomColor());
-        const time = data.timestamp?.toDate();
-        const now = new Date();
-        if (time && (now - time) > 86400000) {
-          doc.ref.delete(); // حذف الرسائل بعد 24 ساعة
-          return;
-        }
 
         const div = document.createElement("div");
         div.innerHTML = `<span class="username" style="color:${color}">${data.user}:</span> ${data.text}`;
-        document.getElementById("messages").appendChild(div);
+        container.appendChild(div);
       });
-      document.getElementById("messages").scrollTop = 999999;
+
+      container.scrollTop = container.scrollHeight;
     });
 }
 
@@ -65,4 +64,5 @@ function generateCaptcha() {
   document.getElementById("captcha-question").innerText = `${a} + ${b} = ؟`;
   window.captchaResult = a + b;
 }
+
 generateCaptcha();
