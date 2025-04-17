@@ -1,37 +1,57 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Kr0wl Chat</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <div id="login-container">
-    <h2>تسجيل حساب جديد</h2>
-    <input type="text" id="username" placeholder="الاسم" />
-    <input type="password" id="password" placeholder="كلمة المرور" />
-    <input type="password" id="confirm" placeholder="تأكيد كلمة المرور" />
-    <div id="captcha">
-      <label id="captcha-question"></label>
-      <input type="text" id="captcha-answer" placeholder="إجابة الكابتشا" />
-    </div>
-    <button onclick="register()">تسجيل</button>
-  </div>
+<script type="module">
+  // استيراد Firebase
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
+  import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
 
-  <div id="chat-container" class="hidden">
-    <div id="chat-header">
-      <h2>محادثة Kr0wl العامة</h2>
-      <span id="user-name"></span>
-    </div>
-    <div id="messages"></div>
-    <input type="text" id="message-input" placeholder="اكتب رسالتك..." />
-    <button onclick="sendMessage()">إرسال</button>
-  </div>
+  const firebaseConfig = {
+    apiKey: "AIzaSyC***********", // تأكد من وضع المفاتيح الصحيحة
+    authDomain: "kr0wl-chat.firebaseapp.com",
+    databaseURL: "https://kr0wl-chat-default-rtdb.firebaseio.com",
+    projectId: "kr0wl-chat",
+    storageBucket: "kr0wl-chat.appspot.com",
+    messagingSenderId: "4342********",
+    appId: "1:4342***********"
+  };
 
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="firebase.js"></script>
-  <script src="script.js"></script>
-</body>
-</html>
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+  const messagesRef = ref(db, "messages");
+
+  const sendBtn = document.getElementById("send");
+  const msgInput = document.getElementById("message");
+  const chatBox = document.getElementById("chat");
+
+  const username = sessionStorage.getItem("username") || "مجهول";
+
+  sendBtn.addEventListener("click", () => {
+    const text = msgInput.value.trim();
+    if (text) {
+      push(messagesRef, {
+        name: username,
+        text: text,
+        timestamp: Date.now()
+      });
+      msgInput.value = "";
+    }
+  });
+
+  // الاستماع للرسائل الجديدة تلقائيًا
+  onChildAdded(messagesRef, (data) => {
+    const msg = data.val();
+    const msgElement = document.createElement("div");
+    msgElement.innerHTML = `<strong style="color:#${stringToColor(msg.name)}">${msg.name}:</strong> ${msg.text}`;
+    chatBox.appendChild(msgElement);
+    chatBox.scrollTop = chatBox.scrollHeight;
+  });
+
+  // تحويل الاسم إلى لون
+  function stringToColor(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    return ((hash >> 24) & 0xFF).toString(16).padStart(2, "0") +
+           ((hash >> 16) & 0xFF).toString(16).padStart(2, "0") +
+           ((hash >> 8) & 0xFF).toString(16).padStart(2, "0");
+  }
+</script>
