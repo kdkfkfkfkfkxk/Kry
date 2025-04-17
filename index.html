@@ -1,57 +1,64 @@
-<script type="module">
-  // استيراد Firebase
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-app.js";
-  import { getDatabase, ref, push, onChildAdded } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-database.js";
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <title>دردشة Kr0wl</title>
+  <style>
+    body { background-color: #111; color: #fff; font-family: Tahoma; text-align: center; padding: 50px; }
+    input { padding: 10px; margin: 10px; border-radius: 5px; border: none; width: 200px; }
+    button { padding: 10px 20px; background: #0ff; border: none; border-radius: 5px; cursor: pointer; }
+    .box { background: #222; padding: 30px; border-radius: 10px; display: inline-block; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>أهلاً بك في دردشة Kr0wl</h2>
+    <input type="text" id="username" placeholder="اكتب اسمك"><br>
+    <input type="password" id="password" placeholder="كلمة السر"><br>
+    <div id="captcha-box"></div>
+    <input type="text" id="captcha-answer" placeholder="أدخل ناتج العملية"><br>
+    <button onclick="login()">دخول</button>
+    <p id="error" style="color: red;"></p>
+  </div>
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyC***********", // تأكد من وضع المفاتيح الصحيحة
-    authDomain: "kr0wl-chat.firebaseapp.com",
-    databaseURL: "https://kr0wl-chat-default-rtdb.firebaseio.com",
-    projectId: "kr0wl-chat",
-    storageBucket: "kr0wl-chat.appspot.com",
-    messagingSenderId: "4342********",
-    appId: "1:4342***********"
-  };
+  <script>
+    const correctPassword = "kr0wldz21";
+    let captchaResult = 0;
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
-  const messagesRef = ref(db, "messages");
-
-  const sendBtn = document.getElementById("send");
-  const msgInput = document.getElementById("message");
-  const chatBox = document.getElementById("chat");
-
-  const username = sessionStorage.getItem("username") || "مجهول";
-
-  sendBtn.addEventListener("click", () => {
-    const text = msgInput.value.trim();
-    if (text) {
-      push(messagesRef, {
-        name: username,
-        text: text,
-        timestamp: Date.now()
-      });
-      msgInput.value = "";
+    function generateCaptcha() {
+      const num1 = Math.floor(Math.random() * 10) + 1;
+      const num2 = Math.floor(Math.random() * 10) + 1;
+      captchaResult = num1 + num2;
+      document.getElementById("captcha-box").innerHTML = `<p>كم ناتج ${num1} + ${num2} ؟</p>`;
     }
-  });
 
-  // الاستماع للرسائل الجديدة تلقائيًا
-  onChildAdded(messagesRef, (data) => {
-    const msg = data.val();
-    const msgElement = document.createElement("div");
-    msgElement.innerHTML = `<strong style="color:#${stringToColor(msg.name)}">${msg.name}:</strong> ${msg.text}`;
-    chatBox.appendChild(msgElement);
-    chatBox.scrollTop = chatBox.scrollHeight;
-  });
+    function login() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      const captchaInput = parseInt(document.getElementById("captcha-answer").value);
 
-  // تحويل الاسم إلى لون
-  function stringToColor(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      hash = str.charCodeAt(i) + ((hash << 5) - hash);
+      if (username === "" || password === "") {
+        document.getElementById("error").textContent = "الرجاء ملء جميع الحقول.";
+        return;
+      }
+
+      if (password !== correctPassword) {
+        document.getElementById("error").textContent = "كلمة السر غير صحيحة.";
+        return;
+      }
+
+      if (captchaInput !== captchaResult) {
+        document.getElementById("error").textContent = "إجابة الكابتشا غير صحيحة.";
+        generateCaptcha();
+        return;
+      }
+
+      // حفظ الاسم مؤقتاً
+      sessionStorage.setItem("username", username);
+      window.location.href = "chat.html";
     }
-    return ((hash >> 24) & 0xFF).toString(16).padStart(2, "0") +
-           ((hash >> 16) & 0xFF).toString(16).padStart(2, "0") +
-           ((hash >> 8) & 0xFF).toString(16).padStart(2, "0");
-  }
-</script>
+
+    window.onload = generateCaptcha;
+  </script>
+</body>
+</html>
