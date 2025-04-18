@@ -1,4 +1,3 @@
-
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 const supabaseUrl = "https://ikqzdttdefzdleuizutnz.supabase.co";
@@ -34,19 +33,25 @@ messageInput.addEventListener("keypress", (e) => {
 });
 
 // جلب الرسائل وعرضها
-supabase
-  .from("Kr0wl")
-  .select("*")
-  .order("id", { ascending: true })
-  .then(({ data }) => {
+async function loadMessages() {
+  const { data, error } = await supabase
+    .from("Kr0wl")
+    .select("*")
+    .order("id", { ascending: true });
+
+  if (!error && data) {
     data.forEach(msg => {
       addMessage(msg.user, msg.text);
     });
-  });
+  }
+}
 
+loadMessages();
+
+// الاشتراك في التحديثات
 supabase
-  .channel("realtime:Kr0wl")
-  .on("postgres_changes", { event: "INSERT", schema: "public", table: "Kr0wl" }, payload => {
+  .channel("chat-room")
+  .on("postgres_changes", { event: "INSERT", schema: "public", table: "Kr0wl" }, (payload) => {
     const msg = payload.new;
     addMessage(msg.user, msg.text);
   })
