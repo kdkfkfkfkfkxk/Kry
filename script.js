@@ -1,4 +1,3 @@
-
 const firebaseConfig = {
   apiKey: "AIzaSyCKiHADVuRqq1Mse2h2ohDeKLM9_rvmrhY",
   authDomain: "kr0wl-chat.firebaseapp.com",
@@ -16,19 +15,33 @@ const loginScreen = document.getElementById("login-screen");
 const chatScreen = document.getElementById("chat-screen");
 const usernameInput = document.getElementById("username");
 const passwordInput = document.getElementById("password");
+const confirmInput = document.getElementById("confirm-password");
 const messageInput = document.getElementById("message-input");
 const messagesDiv = document.getElementById("messages");
 const userLabel = document.getElementById("user-label");
+const errorBox = document.getElementById("error");
 
 let currentUser = "";
 
 function login() {
   const username = usernameInput.value.trim();
   const password = passwordInput.value.trim();
+  const confirm = confirmInput.value.trim();
 
-  if (!username || !password) return alert("أدخل الاسم وكلمة السر");
+  if (!username || !password || !confirm) {
+    errorBox.textContent = "يرجى ملء جميع الحقول.";
+    return;
+  }
 
-  if (password.length < 6) return alert("كلمة السر ضعيفة جداً");
+  if (password !== confirm) {
+    errorBox.textContent = "كلمتا المرور غير متطابقتين.";
+    return;
+  }
+
+  if (password.length < 6) {
+    errorBox.textContent = "كلمة السر ضعيفة جدًا.";
+    return;
+  }
 
   currentUser = username;
   userLabel.textContent = "مرحباً، " + username;
