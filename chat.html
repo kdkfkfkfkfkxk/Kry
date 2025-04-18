@@ -16,6 +16,14 @@ function register() {
   listenMessages();
 }
 
+function logout() {
+  username = "";
+  document.getElementById("login-container").classList.remove("hidden");
+  document.getElementById("chat-container").classList.add("hidden");
+  document.getElementById("username").value = "";
+  document.getElementById("password").value = "";
+}
+
 function sendMessage() {
   const text = document.getElementById("message-input").value.trim();
   if (!text) return;
@@ -35,32 +43,19 @@ function listenMessages() {
     .onSnapshot(snapshot => {
       const msgContainer = document.getElementById("messages");
       msgContainer.innerHTML = "";
+
       snapshot.forEach(doc => {
         const data = doc.data();
         const color = colors[data.user] || (colors[data.user] = getRandomColor());
-
         const div = document.createElement("div");
         div.innerHTML = `<span class="username" style="color:${color}">${data.user}:</span> ${data.text}`;
         msgContainer.appendChild(div);
+        msgContainer.scrollTop = msgContainer.scrollHeight;
       });
-      msgContainer.scrollTop = msgContainer.scrollHeight;
     });
 }
 
-function logout() {
-  location.reload(); // يرجعك لصفحة الدخول
-}
-
 function getRandomColor() {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) color += letters[Math.floor(Math.random() * 16)];
-  return color;
+  const colors = ["#f94144", "#f3722c", "#f8961e", "#90be6d", "#577590", "#277da1", "#43aa8b"];
+  return colors[Math.floor(Math.random() * colors.length)];
 }
-
-function generateCaptcha() {
-  const a = Math.floor(Math.random() * 10), b = Math.floor(Math.random() * 10);
-  document.getElementById("captcha-question").innerText = `${a} + ${b} = ؟`;
-  window.captchaResult = a + b;
-}
-generateCaptcha();
