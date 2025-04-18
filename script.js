@@ -1,16 +1,36 @@
-document.getElementById("registerForm").addEventListener("submit", function (e) {
-  e.preventDefault();
+const username = localStorage.getItem("username");
+if (!username) {
+  window.location.href = "index.html";
+}
 
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value;
-  const confirmPassword = document.getElementById("confirmPassword").value;
+const db = firebase.database();
 
-  if (password !== confirmPassword) {
-    alert("كلمة المرور غير متطابقة.");
-    return;
-  }
+function sendMessage() {
+  const msg = document.getElementById("messageInput").value;
+  if (msg.trim() === "") return;
 
-  // تسجيل الدخول بدون كابتشا
-  sessionStorage.setItem("username", username);
-  window.location.href = "chat.html";
+  db.ref("messages").push({
+    name: username,
+    message: msg,
+    timestamp: Date.now()
+  });
+
+  document.getElementById("messageInput").value = "";
+}
+
+db.ref("messages").on("child_added", (snapshot) => {
+  const data = snapshot.val();
+  const msgDiv = document.getElementById("messages");
+
+  const msg = document.createElement("div");
+  msg.textContent = `${data.name}: ${data.message}`;
+  msg.style.color = "lime";
+
+  msgDiv.appendChild(msg);
+  msgDiv.scrollTop = msgDiv.scrollHeight;
 });
+
+function logout() {
+  localStorage.removeItem("username");
+  window.location.href = "index.html";
+}
