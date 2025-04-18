@@ -1,18 +1,10 @@
-function generateCaptcha() {
-  const num1 = Math.floor(Math.random() * 10) + 1;
-  const num2 = Math.floor(Math.random() * 10) + 1;
-  window.captchaAnswer = num1 + num2;
-  document.getElementById("captchaQuestion").innerText = `ما ناتج ${num1} + ${num2} ؟`;
-}
-
 function register() {
   const user = document.getElementById("username").value.trim();
   const pass = document.getElementById("password").value;
   const confirm = document.getElementById("confirmPassword").value;
-  const captcha = document.getElementById("captchaInput").value;
 
-  if (!user || !pass || !confirm || !captcha) {
-    alert("الرجاء ملء جميع الحقول");
+  if (!user || !pass || !confirm) {
+    alert("يرجى ملء جميع الحقول");
     return;
   }
 
@@ -21,18 +13,12 @@ function register() {
     return;
   }
 
-  if (parseInt(captcha) !== window.captchaAnswer) {
-    alert("إجابة الكابتشا خاطئة");
-    generateCaptcha();
-    return;
-  }
-
-  alert("تم الدخول بنجاح (يمكنك الآن تحويله للدردشة)");
-  // هنا يمكن تحويل المستخدم لصفحة المحادثة
+  alert("تم الدخول بنجاح (جهّز صفحة الدردشة التالية هنا)");
+  // هنا يمكن توجيه المستخدم لصفحة الدردشة، مثال:
+  // window.location.href = "chat.html";
 }
 
 window.onload = () => {
-  generateCaptcha();
   typeWriterEffect();
 };
 
