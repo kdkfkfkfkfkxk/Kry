@@ -1,41 +1,65 @@
 body {
-  background-color: #0d0d0d;
-  color: #00ff99;
-  font-family: 'Courier New', monospace;
+  background-color: black;
+  color: #00ff00;
+  font-family: monospace;
   text-align: center;
-  padding: 10px;
-}
-.container {
-  max-width: 400px;
-  margin: auto;
   padding: 20px;
-  border: 2px solid #00ff99;
-  border-radius: 10px;
-  background-color: #1a1a1a;
 }
+
 input, button {
+  display: block;
   width: 90%;
+  max-width: 300px;
+  margin: 10px auto;
   padding: 10px;
-  margin: 10px 0;
-  background-color: #0d0d0d;
-  color: #00ff99;
-  border: 1px solid #00ff99;
+  background-color: #111;
+  border: 1px solid #00ff00;
+  color: #0f0;
+  font-size: 16px;
+  border-radius: 5px;
 }
+
+button {
+  cursor: pointer;
+  background-color: #003300;
+  transition: background-color 0.3s;
+}
+
 button:hover {
-  background-color: #00ff99;
-  color: #000;
+  background-color: #005500;
 }
-#error, .error {
+
+#error {
   color: red;
 }
-#messages {
-  height: 300px;
-  overflow-y: scroll;
-  text-align: right;
-  border: 1px solid #00ff99;
-  padding: 5px;
-  margin-bottom: 10px;
+
+#captcha {
+  font-size: 20px;
+  margin: 10px;
+  color: #00ff00;
+  animation: blink 1s infinite alternate;
 }
-.hidden {
-  display: none;
+
+.title-container {
+  margin-top: 30px;
+}
+
+#animated-title {
+  font-size: 30px;
+  color: #00ff00;
+  white-space: nowrap;
+  overflow: hidden;
+  border-right: 2px solid #00ff00;
+  animation: typing 4s steps(20) infinite, blink-caret 0.75s step-end infinite;
+}
+
+@keyframes typing {
+  0% { width: 0 }
+  50% { width: 100% }
+  100% { width: 0 }
+}
+
+@keyframes blink-caret {
+  from, to { border-color: transparent }
+  50% { border-color: #00ff00; }
 }
