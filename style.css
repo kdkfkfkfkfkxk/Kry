@@ -1,4 +1,7 @@
+/* إعدادات عامة */
 body {
+  margin: 0;
+  padding: 0;
   background-color: #000;
   color: #0f0;
   font-family: monospace;
@@ -6,47 +9,88 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  margin: 0;
+  direction: rtl;
 }
 
+/* صندوق الدخول */
 .login-box {
   width: 90%;
   max-width: 400px;
   text-align: center;
 }
 
-h1 {
+.login-box h1 {
   font-size: 28px;
   margin-bottom: 30px;
-  animation: glitch 1s infinite;
+  animation: glow 1s infinite alternate;
 }
 
-input {
+input, button {
   width: 100%;
   padding: 12px;
   margin: 10px 0;
   background-color: #111;
   color: #0f0;
   border: 1px solid #0f0;
+  font-size: 16px;
 }
 
 button {
-  width: 100%;
-  padding: 12px;
-  background-color: #000;
-  border: 1px solid #0f0;
-  color: #0f0;
   cursor: pointer;
-  font-size: 16px;
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: #0f0;
+  color: #000;
+}
+
+/* الرسائل */
+.chat-container {
+  width: 90%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  height: 95vh;
+}
+
+.chat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.messages-box {
+  flex: 1;
+  overflow-y: auto;
+  background: #111;
+  padding: 10px;
+  border: 1px solid lime;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.input-row {
+  display: flex;
+}
+
+.input-row input {
+  flex: 1;
+}
+
+.input-row button {
+  width: 80px;
 }
 
 .error {
   color: red;
   margin-top: 10px;
+  font-size: 14px;
 }
 
-@keyframes glitch {
-  0% { text-shadow: 0 0 3px lime; }
-  50% { text-shadow: 0 0 10px green; }
-  100% { text-shadow: 0 0 3px lime; }
+/* تأثير هاكر */
+@keyframes glow {
+  from { text-shadow: 0 0 10px lime; }
+  to { text-shadow: 0 0 20px green; }
 }
