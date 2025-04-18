@@ -11,17 +11,9 @@ function register() {
   username = name;
   document.getElementById("login-container").classList.add("hidden");
   document.getElementById("chat-container").classList.remove("hidden");
-  document.getElementById("user-name").innerText = "أهلاً، " + username;
+  document.getElementById("user-name").innerText = "مرحباً، " + username;
 
   listenMessages();
-}
-
-function logout() {
-  username = "";
-  document.getElementById("login-container").classList.remove("hidden");
-  document.getElementById("chat-container").classList.add("hidden");
-  document.getElementById("username").value = "";
-  document.getElementById("password").value = "";
 }
 
 function sendMessage() {
@@ -48,14 +40,20 @@ function listenMessages() {
         const data = doc.data();
         const color = colors[data.user] || (colors[data.user] = getRandomColor());
         const div = document.createElement("div");
-        div.innerHTML = `<span class="username" style="color:${color}">${data.user}:</span> ${data.text}`;
+        div.style.color = color;
+        div.innerHTML = `<b>${data.user}:</b> ${data.text}`;
         msgContainer.appendChild(div);
-        msgContainer.scrollTop = msgContainer.scrollHeight;
       });
+
+      msgContainer.scrollTop = msgContainer.scrollHeight;
     });
 }
 
 function getRandomColor() {
-  const colors = ["#f94144", "#f3722c", "#f8961e", "#90be6d", "#577590", "#277da1", "#43aa8b"];
-  return colors[Math.floor(Math.random() * colors.length)];
+  const letters = "0123456789ABCDEF";
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
 }
