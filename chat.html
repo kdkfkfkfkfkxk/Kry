@@ -1,0 +1,47 @@
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الدردشة - Kry</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script src="firebase.js"></script>
+  <style>
+    body { background-color: black; color: #0f0; font-family: monospace; padding: 10px; }
+    #chat-box { height: 60vh; overflow-y: auto; border: 1px solid #0f0; padding: 10px; margin-bottom: 10px; }
+    input, button { font-family: monospace; padding: 5px; margin: 5px 0; background: black; color: #0f0; border: 1px solid #0f0; }
+  </style>
+</head>
+<body>
+  <h2>مرحبًا <span id="usernameDisplay"></span></h2>
+  <div id="chat-box"></div>
+  <input type="text" id="messageInput" placeholder="اكتب رسالتك هنا">
+  <button onclick="sendMessage()">إرسال</button>
+
+  <script>
+    const username = localStorage.getItem('username') || 'مجهول';
+    document.getElementById("usernameDisplay").innerText = username;
+
+    const db = firebase.database();
+    const chatBox = document.getElementById("chat-box");
+
+    function sendMessage() {
+      const msg = document.getElementById("messageInput").value;
+      if (msg.trim() === "") return;
+      db.ref("messages").push({ user: username, text: msg });
+      document.getElementById("messageInput").value = "";
+    }
+
+    db.ref("messages").on("child_added", snapshot => {
+      const msg = snapshot.val();
+      const p = document.createElement("p");
+      p.textContent = msg.user + ": " + msg.text;
+      chatBox.appendChild(p);
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
+  </script>
+</body>
+</html>
