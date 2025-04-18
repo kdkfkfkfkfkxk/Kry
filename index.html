@@ -1,22 +1,35 @@
+
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <title>Kry Chat - تسجيل</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kry Chat</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1 class="typewriter">مرحبًا بك في Kry Chat</h1>
-        <div class="login-box">
-            <input type="text" id="username" placeholder="اسم المستخدم">
-            <input type="password" id="password" placeholder="كلمة المرور">
-            <input type="password" id="confirm" placeholder="تأكيد كلمة المرور">
-            <button onclick="login()">دخول</button>
-            <p id="error"></p>
-        </div>
+  <div id="login-screen" class="screen">
+    <h1 class="hacker-title">Kry Chat</h1>
+    <input type="text" id="username" placeholder="اسم المستخدم" />
+    <input type="password" id="password" placeholder="كلمة السر" />
+    <button onclick="login()">دخول</button>
+  </div>
+
+  <div id="chat-screen" class="screen hidden">
+    <div class="header">
+      <span id="user-label"></span>
+      <button onclick="logout()" class="logout">خروج</button>
     </div>
-    <script src="login.js"></script>
+    <div id="messages"></div>
+    <div class="input-container">
+      <input type="text" id="message-input" placeholder="اكتب رسالتك..." />
+      <button onclick="sendMessage()">إرسال</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
