@@ -1,44 +1,33 @@
-
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!-- index.html --><!DOCTYPE html><html lang="ar">
 <head>
-    <meta charset="UTF-8">
-    <title>Kr0wl Chat</title>
-    <style>
-        body { background-color: #111; color: white; font-family: sans-serif; }
-        .hidden { display: none; }
-        #chat-container { margin-top: 20px; }
-        #messages div { margin: 5px 0; padding: 5px; border-bottom: 1px solid #333; }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kr0wl Chat</title>
+  <style>
+    body { background: #111; color: white; font-family: sans-serif; text-align: center; padding: 10px; }
+    #chat-container { display: none; }
+    .hidden { display: none; }
+    .username { font-weight: bold; }
+    #messages { height: 300px; overflow-y: auto; border: 1px solid #333; padding: 10px; margin-bottom: 10px; background: #222; }
+    input, button { padding: 10px; margin: 5px; border: none; border-radius: 5px; }
+    button { background: #0f0; color: #000; font-weight: bold; }
+  </style>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 </head>
 <body>
-    <div id="login-container">
-        <h2>تسجيل الدخول</h2>
-        <input type="text" id="username" placeholder="اسم المستخدم">
-        <input type="password" id="password" placeholder="كلمة المرور">
-        <button onclick="register()">دخول</button>
-    </div>
-
-    <div id="chat-container" class="hidden">
-        <div id="user-name"></div>
-        <div>
-            <input type="text" id="message-input" placeholder="اكتب رسالتك">
-            <button onclick="sendMessage()">إرسال</button>
-            <button onclick="logout()">خروج</button>
-        </div>
-        <div id="messages"></div>
-    </div>
-
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-    <script>
-      const firebaseConfig = {
-        // إعدادات فايربيز هنا
-      };
-      firebase.initializeApp(firebaseConfig);
-      const db = firebase.firestore();
-    </script>
-    <script src="chat.js"></script>
-</body>
+  <div id="login-container">
+    <h2>أدخل اسم المستخدم</h2>
+    <input id="username" placeholder="الاسم">
+    <input id="password" type="password" placeholder="كلمة السر">
+    <br>
+    <button onclick="register()">دخول</button>
+  </div>  <div id="chat-container">
+    <h2 id="user-name"></h2>
+    <div id="messages"></div>
+    <input id="message-input" placeholder="اكتب رسالتك">
+    <button onclick="sendMessage()">إرسال</button>
+    <br>
+    <button onclick="logout()">خروج</button>
+  </div>  <script src="chat.js"></script></body>
 </html>
