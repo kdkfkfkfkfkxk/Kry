@@ -1,23 +1,28 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html dir="rtl" lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Kry Chat</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>محادثة Kry</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="login-box">
-    <h2>تسجيل الدخول إلى Kry Chat</h2>
-    <form id="registerForm">
-      <input type="text" id="username" placeholder="اسم المستخدم" required />
-      <input type="password" id="password" placeholder="كلمة المرور" required />
-      <input type="password" id="confirmPassword" placeholder="تأكيد كلمة المرور" required />
-      <!-- الكابتشا حُذفت من هنا -->
-      <button type="submit">دخول</button>
-    </form>
+  <div id="login-screen">
+    <h2>تسجيل الدخول</h2>
+    <input type="text" id="username" placeholder="اسم المستخدم">
+    <input type="password" id="password" placeholder="كلمة المرور">
+    <button onclick="login()">دخول</button>
   </div>
 
+  <div id="chat-screen" style="display:none;">
+    <button id="logout-btn" onclick="logout()">خروج</button>
+    <h3 id="welcome"></h3>
+    <div id="messages"></div>
+    <input type="text" id="message-input" placeholder="اكتب رسالتك...">
+    <button onclick="sendMessage()">إرسال</button>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
