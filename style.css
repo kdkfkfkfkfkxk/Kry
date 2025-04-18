@@ -36,12 +36,12 @@ button {
 }
 
 .hacker-title {
-  animation: blink 1s infinite;
+  animation: glow 1s infinite alternate;
 }
 
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+@keyframes glow {
+  from { text-shadow: 0 0 10px lime; }
+  to { text-shadow: 0 0 20px green; }
 }
 
 #messages {
