@@ -1,84 +1,44 @@
+
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Kr0wl Chat</title>
-  <style>
-    body {
-      background-color: #0f0f0f;
-      color: white;
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      text-align: center;
-    }
-    .hidden {
-      display: none;
-    }
-    #messages {
-      height: 300px;
-      overflow-y: scroll;
-      border: 1px solid #333;
-      padding: 10px;
-      margin-bottom: 10px;
-      background-color: #1a1a1a;
-    }
-    input {
-      padding: 10px;
-      margin: 5px;
-      width: 80%;
-      background-color: #222;
-      color: white;
-      border: 1px solid #555;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #444;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #666;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Kr0wl Chat</title>
+    <style>
+        body { background-color: #111; color: white; font-family: sans-serif; }
+        .hidden { display: none; }
+        #chat-container { margin-top: 20px; }
+        #messages div { margin: 5px 0; padding: 5px; border-bottom: 1px solid #333; }
+    </style>
 </head>
 <body>
+    <div id="login-container">
+        <h2>تسجيل الدخول</h2>
+        <input type="text" id="username" placeholder="اسم المستخدم">
+        <input type="password" id="password" placeholder="كلمة المرور">
+        <button onclick="register()">دخول</button>
+    </div>
 
-  <div id="login-container">
-    <h2>تسجيل الدخول</h2>
-    <input id="username" placeholder="اكتب اسمك"><br>
-    <input id="password" type="password" placeholder="كلمة السر"><br>
-    <button onclick="register()">دخول</button>
-  </div>
+    <div id="chat-container" class="hidden">
+        <div id="user-name"></div>
+        <div>
+            <input type="text" id="message-input" placeholder="اكتب رسالتك">
+            <button onclick="sendMessage()">إرسال</button>
+            <button onclick="logout()">خروج</button>
+        </div>
+        <div id="messages"></div>
+    </div>
 
-  <div id="chat-container" class="hidden">
-    <h2 id="user-name"></h2>
-    <div id="messages"></div>
-    <input id="message-input" placeholder="اكتب رسالة">
-    <button onclick="sendMessage()">إرسال</button>
-  </div>
-
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-
-  <!-- إعدادات Firebase -->
-  <script>
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_PROJECT_ID.appspot.com",
-      messagingSenderId: "SENDER_ID",
-      appId: "APP_ID"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-  </script>
-
-  <!-- سكربت الدردشة -->
-  <script src="chat.js"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script>
+      const firebaseConfig = {
+        // إعدادات فايربيز هنا
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+    </script>
+    <script src="chat.js"></script>
 </body>
 </html>
