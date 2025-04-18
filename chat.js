@@ -24,7 +24,7 @@ function register() {
   username = name;
   document.getElementById("login-container").classList.add("hidden");
   document.getElementById("chat-container").classList.remove("hidden");
-  document.getElementById("user-name").innerText = "أهلاً، " + username;
+  document.getElementById("user-name").innerText = "مرحبًا، " + username;
   listenMessages();
 }
 
