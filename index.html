@@ -1,169 +1,93 @@
+<!-- index.html -->
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>محادثة هاكر</title>
+  <meta charset="UTF-8">
+  <title>تسجيل حساب - Kry</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      background-color: #0d0d0d;
-      color: #00ff00;
-      font-family: monospace;
-      margin: 0;
-      padding: 0;
+      background-color: black;
+      color: white;
+      font-family: sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
       direction: rtl;
     }
-    .container {
-      width: 100%;
+
+    .box {
+      background-color: #111;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px lime;
+      width: 90%;
       max-width: 400px;
     }
-    .login-box, .chat-box {
-      background-color: #111;
-      padding: 20px;
-      border-radius: 10px;
+
+    .box h2 {
+      color: lime;
+      text-align: center;
+      margin-bottom: 20px;
     }
-    input, button {
+
+    .box input {
       width: 100%;
-      margin: 5px 0;
       padding: 10px;
+      margin: 10px 0;
       border: none;
       border-radius: 5px;
     }
-    button {
-      background-color: #00aa00;
-      color: white;
+
+    .box button {
+      width: 100%;
+      padding: 10px;
+      background-color: lime;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 16px;
       cursor: pointer;
     }
-    .messages {
-      height: 300px;
-      overflow-y: scroll;
-      background: #000;
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 5px;
-    }
-    .input-area {
-      display: flex;
-      gap: 5px;
-    }
-    .input-area input {
-      flex: 1;
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .hidden {
-      display: none;
+
+    .error {
+      color: red;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="login-box" id="loginBox">
-      <h2>تسجيل الدخول</h2>
-      <input type="text" id="usernameInput" placeholder="اسم المستخدم" />
-      <input type="password" id="passwordInput" placeholder="كلمة المرور" />
-      <button onclick="login()">دخول</button>
-    </div>
-
-    <div class="chat-box hidden" id="chatBox">
-      <div class="header">
-        <span id="usernameDisplay"></span>
-        <button onclick="logout()">خروج</button>
-      </div>
-      <div class="messages" id="messages"></div>
-      <div class="input-area">
-        <input type="text" id="messageInput" placeholder="اكتب رسالة..." />
-        <button onclick="sendMessage()">ارسال</button>
-      </div>
-    </div>
+  <div class="box">
+    <h2>تسجيل حساب جديد</h2>
+    <input type="text" id="username" placeholder="اسم المستخدم">
+    <input type="password" id="password" placeholder="كلمة المرور">
+    <input type="password" id="confirmPassword" placeholder="تأكيد كلمة المرور">
+    <button onclick="register()">دخول</button>
+    <div class="error" id="error"></div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import {
-      getDatabase, ref, push, onChildAdded, remove, get, set
-    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
+  <script>
+    function register() {
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+      const error = document.getElementById("error");
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCKiHADVuRqq1Mse2h2ohDeKLM9_rvmrhY",
-      authDomain: "kr0wl-chat.firebaseapp.com",
-      databaseURL: "https://kr0wl-chat-default-rtdb.firebaseio.com",
-      projectId: "kr0wl-chat",
-      storageBucket: "kr0wl-chat.appspot.com",
-      messagingSenderId: "941342507383",
-      appId: "1:941342507383:web:50d6c755abe6aef1066172",
-      measurementId: "G-WZ8NME39V7"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const messagesRef = ref(db, "messages");
-
-    const loginBox = document.getElementById("loginBox");
-    const chatBox = document.getElementById("chatBox");
-    const usernameDisplay = document.getElementById("usernameDisplay");
-    const usernameInput = document.getElementById("usernameInput");
-    const passwordInput = document.getElementById("passwordInput");
-
-    function login() {
-      const username = usernameInput.value.trim();
-      const password = passwordInput.value.trim();
-      if (username && password.length >= 6) {
-        sessionStorage.setItem("user", username);
-        loginBox.classList.add("hidden");
-        chatBox.classList.remove("hidden");
-        usernameDisplay.textContent = username;
-      } else {
-        alert("يرجى إدخال اسم وكلمة مرور لا تقل عن 6 أحرف");
+      if (!username || !password || !confirmPassword) {
+        error.textContent = "يرجى ملء جميع الحقول.";
+        return;
       }
-    }
 
-    function logout() {
-      sessionStorage.removeItem("user");
-      location.reload();
-    }
-
-    function sendMessage() {
-      const user = sessionStorage.getItem("user");
-      const message = document.getElementById("messageInput").value.trim();
-      if (user && message) {
-        push(messagesRef, {
-          user,
-          message,
-          timestamp: Date.now()
-        });
-        document.getElementById("messageInput").value = "";
+      if (password !== confirmPassword) {
+        error.textContent = "كلمتا المرور غير متطابقتين.";
+        return;
       }
+
+      sessionStorage.setItem("username", username);
+      window.location.href = "chat.html";
     }
-
-    onChildAdded(messagesRef, (data) => {
-      const { user, message } = data.val();
-      const messagesDiv = document.getElementById("messages");
-      const msg = document.createElement("div");
-      msg.textContent = `${user}: ${message}`;
-      messagesDiv.appendChild(msg);
-      messagesDiv.scrollTop = messagesDiv.scrollHeight;
-    });
-
-    window.addEventListener("beforeunload", () => {
-      sessionStorage.removeItem("user");
-    });
-
-    window.addEventListener("load", () => {
-      const user = sessionStorage.getItem("user");
-      if (user) {
-        loginBox.classList.add("hidden");
-        chatBox.classList.remove("hidden");
-        usernameDisplay.textContent = user;
-      }
-    });
   </script>
 </body>
 </html>
