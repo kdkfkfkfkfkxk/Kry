@@ -1,3 +1,4 @@
+
 const firebaseConfig = {
   apiKey: "AIzaSyCKiHADVuRqq1Mse2h2ohDeKLM9_rvmrhY",
   authDomain: "kr0wl-chat.firebaseapp.com",
@@ -39,7 +40,7 @@ function login() {
   }
 
   if (password.length < 6) {
-    errorBox.textContent = "كلمة السر ضعيفة جدًا.";
+    errorBox.textContent = "كلمة السر ضعيفة جداً.";
     return;
   }
 
