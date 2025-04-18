@@ -21,14 +21,16 @@
       background: #111;
       color: #0f0;
       border: 1px solid #0f0;
-      padding: 10px;
-      margin: 5px 0;
+      padding: 15px;
+      font-size: 18px;
+      margin: 10px 0;
       width: 100%;
+      box-sizing: border-box;
     }
 
     #messages {
-      height: 300px;
-      overflow-y: scroll;
+      height: 400px;
+      overflow-y: auto;
       border: 1px solid #0f0;
       padding: 10px;
       margin-top: 10px;
@@ -36,7 +38,10 @@
 
     .hidden { display: none; }
 
-    .username { font-weight: bold; color: #0ff; }
+    .username {
+      font-weight: bold;
+      color: #0ff;
+    }
   </style>
 </head>
 <body>
@@ -55,8 +60,10 @@
     <button onclick="logout()">خروج</button>
   </div>
 
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+  <!-- سكربت الدردشة -->
   <script src="chat.js"></script>
 </body>
 </html>
