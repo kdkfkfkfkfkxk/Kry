@@ -1,0 +1,41 @@
+body {
+  background-color: #0d0d0d;
+  color: #00ff99;
+  font-family: 'Courier New', monospace;
+  text-align: center;
+  padding: 10px;
+}
+.container {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  border: 2px solid #00ff99;
+  border-radius: 10px;
+  background-color: #1a1a1a;
+}
+input, button {
+  width: 90%;
+  padding: 10px;
+  margin: 10px 0;
+  background-color: #0d0d0d;
+  color: #00ff99;
+  border: 1px solid #00ff99;
+}
+button:hover {
+  background-color: #00ff99;
+  color: #000;
+}
+#error, .error {
+  color: red;
+}
+#messages {
+  height: 300px;
+  overflow-y: scroll;
+  text-align: right;
+  border: 1px solid #00ff99;
+  padding: 5px;
+  margin-bottom: 10px;
+}
+.hidden {
+  display: none;
+}
