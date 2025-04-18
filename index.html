@@ -1,89 +1,84 @@
 <!DOCTYPE html>
 <html lang="ar">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Kr0wl Chat</title>
   <style>
-    body { background: #000; color: #0f0; font-family: monospace; text-align: center; }
-    .hidden { display: none; }
-    #chat-container { margin-top: 20px; }
-    #messages { max-height: 400px; overflow-y: auto; border: 1px solid #0f0; padding: 10px; }
-    input, button { margin: 5px; padding: 5px; }
+    body {
+      background-color: #0f0f0f;
+      color: white;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+    .hidden {
+      display: none;
+    }
+    #messages {
+      height: 300px;
+      overflow-y: scroll;
+      border: 1px solid #333;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: #1a1a1a;
+    }
+    input {
+      padding: 10px;
+      margin: 5px;
+      width: 80%;
+      background-color: #222;
+      color: white;
+      border: 1px solid #555;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #444;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #666;
+    }
   </style>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
   <div id="login-container">
     <h2>تسجيل الدخول</h2>
-    <input id="username" placeholder="اسم المستخدم"><br>
-    <input id="password" placeholder="كلمة السر" type="password"><br>
+    <input id="username" placeholder="اكتب اسمك"><br>
+    <input id="password" type="password" placeholder="كلمة السر"><br>
     <button onclick="register()">دخول</button>
   </div>
 
   <div id="chat-container" class="hidden">
-    <div>مرحباً، <span id="user-name"></span> <button onclick="logout()">خروج</button></div>
+    <h2 id="user-name"></h2>
     <div id="messages"></div>
-    <input id="message-input" placeholder="اكتب رسالة...">
+    <input id="message-input" placeholder="اكتب رسالة">
     <button onclick="sendMessage()">إرسال</button>
   </div>
 
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+
+  <!-- إعدادات Firebase -->
   <script>
     const firebaseConfig = {
-      apiKey: "AIzaSyDMe-VjxqfaXQ7GpDK2yxRgPVmAowKuNlM",
-      authDomain: "kr0wl-chat.firebaseapp.com",
-      projectId: "kr0wl-chat",
-      storageBucket: "kr0wl-chat.appspot.com",
-      messagingSenderId: "347905406353",
-      appId: "1:347905406353:web:7147d3ff2a1f3c19d5e0cf"
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
     };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-
-    let username = "";
-    function register() {
-      const name = document.getElementById("username").value.trim();
-      const pass = document.getElementById("password").value.trim();
-      if (!name || !pass) return alert("اكتب اسمك وكلمة السر");
-      if (pass !== "kr0wldz21") return alert("كلمة المرور غير صحيحة");
-      username = name;
-      document.getElementById("login-container").classList.add("hidden");
-      document.getElementById("chat-container").classList.remove("hidden");
-      document.getElementById("user-name").innerText = username;
-      listenMessages();
-    }
-
-    function logout() {
-      location.reload();
-    }
-
-    function sendMessage() {
-      const text = document.getElementById("message-input").value.trim();
-      if (!text) return;
-      db.collection("messages").add({
-        user: username,
-        text: text,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      document.getElementById("message-input").value = "";
-    }
-
-    function listenMessages() {
-      db.collection("messages")
-        .orderBy("timestamp")
-        .onSnapshot(snapshot => {
-          const msgContainer = document.getElementById("messages");
-          msgContainer.innerHTML = "";
-          snapshot.forEach(doc => {
-            const data = doc.data();
-            const div = document.createElement("div");
-            div.innerHTML = `<b>${data.user}:</b> ${data.text}`;
-            msgContainer.appendChild(div);
-          });
-        });
-    }
   </script>
 
+  <!-- سكربت الدردشة -->
+  <script src="chat.js"></script>
 </body>
 </html>
