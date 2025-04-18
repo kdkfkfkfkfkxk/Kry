@@ -1,55 +1,80 @@
-const username = sessionStorage.getItem("username");
-if (!username) window.location.href = "index.html";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import {
+  getDatabase,
+  ref,
+  push,
+  onChildAdded,
+  remove,
+  get,
+} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
-// بيانات supabase
-const supabaseUrl = "https://your-project.supabase.co";
-const supabaseKey = "your-anon-key";
-const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+// إعدادات Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyCKiHADVuRqq1Mse2h2ohDeKLM9_rvmrhY",
+  authDomain: "kr0wl-chat.firebaseapp.com",
+  databaseURL: "https://kr0wl-chat-default-rtdb.firebaseio.com",
+  projectId: "kr0wl-chat",
+  storageBucket: "kr0wl-chat.appspot.com",
+  messagingSenderId: "941342507383",
+  appId: "1:941342507383:web:50d6c755abe6aef1066172"
+};
 
-// إرسال الرسالة
-async function sendMessage() {
-  const content = document.getElementById("messageInput").value.trim();
-  if (!content) return;
+// تهيئة Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const messagesRef = ref(db, "messages");
 
-  await supabase.from("messages").insert([{ user: username, content }]);
-  document.getElementById("messageInput").value = "";
-}
+const chat = document.getElementById("chat");
+const messageInput = document.getElementById("message");
+const sendButton = document.getElementById("send");
 
-// عرض الرسائل
-async function loadMessages() {
-  const { data } = await supabase.from("messages").select("*").order("id", { ascending: true });
-  const messagesDiv = document.getElementById("messages");
-  messagesDiv.innerHTML = "";
-
-  data.forEach(msg => {
-    const msgDiv = document.createElement("div");
-    msgDiv.className = "message";
-    msgDiv.innerHTML = `<strong style="color: ${colorFromName(msg.user)}">${msg.user}:</strong> ${msg.content}`;
-    messagesDiv.appendChild(msgDiv);
-  });
-
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
-// ألوان حسب الاسم
-function colorFromName(name) {
-  const colors = ["#00ffcc", "#ff00ff", "#00ffff", "#ffcc00", "#ff6666"];
-  let sum = 0;
-  for (let i = 0; i < name.length; i++) sum += name.charCodeAt(i);
-  return colors[sum % colors.length];
-}
-
-// استماع مباشر للرسائل
-supabase
-  .channel('public:messages')
-  .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' }, loadMessages)
-  .subscribe();
+const name = sessionStorage.getItem("name");
 
 // زر الخروج
-function logout() {
+document.getElementById("logout").addEventListener("click", () => {
   sessionStorage.clear();
-  window.location.href = "index.html";
+  location.reload();
+});
+
+// إرسال الرسالة عند الضغط على الزر
+sendButton.addEventListener("click", sendMessage);
+
+// إرسال الرسالة عند الضغط على Enter
+messageInput.addEventListener("keypress", function (e) {
+  if (e.key === "Enter") {
+    sendMessage();
+  }
+});
+
+function sendMessage() {
+  const text = messageInput.value.trim();
+  if (text === "") return;
+
+  const message = {
+    name: name || "مجهول",
+    text: text,
+    time: Date.now(),
+  };
+
+  push(messagesRef, message);
+  messageInput.value = "";
 }
 
-// أول تحميل
-loadMessages();
+// عرض الرسائل عند إضافتها
+onChildAdded(messagesRef, (data) => {
+  const msg = data.val();
+  const msgElement = document.createElement("div");
+  msgElement.innerHTML = `<span style="color:${getColor(msg.name)};">${msg.name}</span>: ${msg.text}`;
+  chat.appendChild(msgElement);
+  chat.scrollTop = chat.scrollHeight;
+});
+
+// تلوين الأسماء
+function getColor(name) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const color = `hsl(${hash % 360}, 100%, 70%)`;
+  return color;
+}
