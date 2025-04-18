@@ -1,99 +1,164 @@
-<!DOCTYPE html><html lang="ar" dir="rtl">
+index.html
+
+<!DOCTYPE html>
+<html lang="ar">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>محادثة جماعية</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Courier New', monospace;
-      background-color: #000;
-      color: #0f0;
-    }
-    #login-screen, #chat-screen {
-      display: none;
-      padding: 20px;
-    }
-    #login-screen.active, #chat-screen.active {
-      display: block;
-    }
-    input, button {
-      background: #111;
-      color: #0f0;
-      border: 1px solid #0f0;
-      padding: 8px;
-      margin: 5px 0;
-      width: 100%;
-    }
-    #messages {
-      height: 60vh;
-      overflow-y: auto;
-      border: 1px solid #0f0;
-      padding: 10px;
-      margin-bottom: 10px;
-    }
-    #logout {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: #f00;
-      color: #fff;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kr0wl Chat</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <script defer src="app.js"></script>
 </head>
-<body><div id="login-screen" class="active">
-  <h2>تسجيل الدخول</h2>
-  <input type="text" id="username" placeholder="اسم المستخدم" required />
-  <input type="password" id="password" placeholder="كلمة المرور" required />
-  <input type="password" id="confirm-password" placeholder="تأكيد كلمة المرور" required />
-  <button onclick="login()">دخول</button>
-</div><div id="chat-screen">
-  <button id="logout" onclick="logout()">خروج</button>
-  <div id="messages"></div>
-  <input type="text" id="message-input" placeholder="اكتب رسالتك..." />
-  <button onclick="sendMessage()">إرسال</button>
-</div><script>
-  const VALID_PASSWORD = "Kr0wldz21";
+<body>
+  <div class="container">
+    <div class="login-box" id="login-box">
+      <h2>تسجيل الدخول</h2>
+      <input type="text" id="username" placeholder="اسم المستخدم">
+      <input type="password" id="password" placeholder="كلمة المرور">
+      <button onclick="login()">دخول</button>
+    </div>
 
-  function login() {
-    const user = document.getElementById("username").value.trim();
-    const pass = document.getElementById("password").value;
-    const confirm = document.getElementById("confirm-password").value;
-
-    if (!user || !pass || !confirm) return alert("الرجاء ملء جميع الحقول.");
-    if (pass !== confirm) return alert("كلمة المرور غير متطابقة.");
-    if (pass !== VALID_PASSWORD) return alert("كلمة المرور غير صحيحة.");
-
-    localStorage.setItem("user", user);
-    document.getElementById("login-screen").classList.remove("active");
-    document.getElementById("chat-screen").classList.add("active");
-  }
-
-  function logout() {
-    localStorage.clear();
-    location.reload();
-  }
-
-  function sendMessage() {
-    const msgBox = document.getElementById("message-input");
-    const msg = msgBox.value.trim();
-    if (!msg) return;
-
-    const user = localStorage.getItem("user") || "مجهول";
-    const msgEl = document.createElement("div");
-    msgEl.textContent = `${user}: ${msg}`;
-    document.getElementById("messages").appendChild(msgEl);
-
-    msgBox.value = "";
-    msgBox.focus();
-
-    const messagesDiv = document.getElementById("messages");
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  }
-
-  // تسجيل خروج عند الرجوع
-  window.onpopstate = function () {
-    logout();
-  };
-</script></body>
+    <div class="chat-box hidden" id="chat-box">
+      <div class="header">
+        <span id="user-label"></span>
+        <button onclick="logout()">خروج</button>
+      </div>
+      <div class="messages" id="messages"></div>
+      <div class="input-area">
+        <input type="text" id="message-input" placeholder="اكتب رسالة...">
+        <button onclick="sendMessage()">ارسال</button>
+      </div>
+    </div>
+  </div>
+</body>
 </html>
+
+style.css
+
+body {
+  background-color: #0d0d0d;
+  color: #00ff00;
+  font-family: monospace;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  direction: rtl;
+}
+
+.container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.login-box, .chat-box {
+  background-color: #111;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+input, button {
+  width: 100%;
+  margin: 5px 0;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+}
+
+button {
+  background-color: #00aa00;
+  color: white;
+  cursor: pointer;
+}
+
+.messages {
+  height: 300px;
+  overflow-y: scroll;
+  background: #000;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.input-area {
+  display: flex;
+  gap: 5px;
+}
+
+.input-area input {
+  flex: 1;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hidden {
+  display: none;
+}
+
+app.js
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCKiHADVuRqq1Mse2h2ohDeKLM9_rvmrhY",
+  authDomain: "kr0wl-chat.firebaseapp.com",
+  databaseURL: "https://kr0wl-chat-default-rtdb.firebaseio.com",
+  projectId: "kr0wl-chat",
+  storageBucket: "kr0wl-chat.appspot.com",
+  messagingSenderId: "941342507383",
+  appId: "1:941342507383:web:50d6c755abe6aef1066172",
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+let currentUser = null;
+
+function login() {
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  if (username && password.length >= 6) {
+    currentUser = username;
+    document.getElementById("user-label").innerText = `مرحبا، ${currentUser}`;
+    document.getElementById("login-box").classList.add("hidden");
+    document.getElementById("chat-box").classList.remove("hidden");
+    listenForMessages();
+  } else {
+    alert("ادخل اسم صحيح وكلمة مرور لا تقل عن 6 أحرف");
+  }
+}
+
+function logout() {
+  location.reload();
+}
+
+function sendMessage() {
+  const msgInput = document.getElementById("message-input");
+  const text = msgInput.value.trim();
+  if (!text) return;
+
+  db.ref("messages").push({ user: currentUser, text });
+  msgInput.value = "";
+}
+
+function listenForMessages() {
+  const messagesBox = document.getElementById("messages");
+  db.ref("messages").on("child_added", (snapshot) => {
+    const msg = snapshot.val();
+    const el = document.createElement("div");
+    el.innerText = `${msg.user}: ${msg.text}`;
+    messagesBox.appendChild(el);
+    messagesBox.scrollTop = messagesBox.scrollHeight;
+  });
+}
+
+window.onbeforeunload = () => logout();
+
