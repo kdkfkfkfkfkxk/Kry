@@ -1,33 +1,58 @@
-<!-- index.html --><!DOCTYPE html><html lang="ar">
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
   <title>Kr0wl Chat</title>
   <style>
-    body { background: #111; color: white; font-family: sans-serif; text-align: center; padding: 10px; }
-    #chat-container { display: none; }
-    .hidden { display: none; }
-    .username { font-weight: bold; }
-    #messages { height: 300px; overflow-y: auto; border: 1px solid #333; padding: 10px; margin-bottom: 10px; background: #222; }
-    input, button { padding: 10px; margin: 5px; border: none; border-radius: 5px; }
-    button { background: #0f0; color: #000; font-weight: bold; }
+    body {
+      background-color: #111;
+      color: #0fffcf;
+      font-family: monospace;
+      text-align: center;
+    }
+    #chat-container {
+      max-width: 600px;
+      margin: 30px auto;
+      border: 1px solid #555;
+      padding: 10px;
+      background-color: #1b1b1b;
+    }
+    #messages {
+      height: 300px;
+      overflow-y: auto;
+      background: #222;
+      padding: 10px;
+      margin-bottom: 10px;
+      text-align: left;
+      direction: rtl;
+    }
+    input, button {
+      padding: 10px;
+      font-size: 16px;
+      margin: 5px;
+    }
+    #input-container {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .msg {
+      margin: 5px 0;
+    }
   </style>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 </head>
 <body>
-  <div id="login-container">
-    <h2>أدخل اسم المستخدم</h2>
-    <input id="username" placeholder="الاسم">
-    <input id="password" type="password" placeholder="كلمة السر">
-    <br>
-    <button onclick="register()">دخول</button>
-  </div>  <div id="chat-container">
-    <h2 id="user-name"></h2>
+  <h1>محادثة <span style="color: #00ffaa;">Kr0wl</span> العامة</h1>
+  <div id="chat-container">
     <div id="messages"></div>
-    <input id="message-input" placeholder="اكتب رسالتك">
-    <button onclick="sendMessage()">إرسال</button>
-    <br>
-    <button onclick="logout()">خروج</button>
-  </div>  <script src="chat.js"></script></body>
+    <div id="input-container">
+      <input id="message-input" placeholder="اكتب رسالتك..." />
+      <button onclick="sendMessage()">إرسال</button>
+    </div>
+  </div>
+
+  <script src="chat.js"></script>
+</body>
 </html>
