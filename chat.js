@@ -1,80 +1,76 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import {
-  getDatabase,
-  ref,
-  push,
-  onChildAdded,
-  remove,
-  get,
-} from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
-// إعدادات Firebase
-const firebaseConfig = {
-  apiKey: "AIzaSyCKiHADVuRqq1Mse2h2ohDeKLM9_rvmrhY",
-  authDomain: "kr0wl-chat.firebaseapp.com",
-  databaseURL: "https://kr0wl-chat-default-rtdb.firebaseio.com",
-  projectId: "kr0wl-chat",
-  storageBucket: "kr0wl-chat.appspot.com",
-  messagingSenderId: "941342507383",
-  appId: "1:941342507383:web:50d6c755abe6aef1066172"
-};
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
-// تهيئة Firebase
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const messagesRef = ref(db, "messages");
+const supabaseUrl = "https://ikqzdttdefzdleuizutnz.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrcXpkdGRlZnpkbGV1aXp1dG56Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ5Nzg1NzgsImV4cCI6MjA2MDU1NDU3OH0.3w38C2IvtJBpxmogW6X_FLNjG27rQKImET7ILIf-Z-w";
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+const username = sessionStorage.getItem("name");
+if (!username) {
+  location.href = "index.html";
+}
 
 const chat = document.getElementById("chat");
 const messageInput = document.getElementById("message");
 const sendButton = document.getElementById("send");
 
-const name = sessionStorage.getItem("name");
-
-// زر الخروج
-document.getElementById("logout").addEventListener("click", () => {
-  sessionStorage.clear();
-  location.reload();
-});
-
-// إرسال الرسالة عند الضغط على الزر
-sendButton.addEventListener("click", sendMessage);
-
-// إرسال الرسالة عند الضغط على Enter
-messageInput.addEventListener("keypress", function (e) {
-  if (e.key === "Enter") {
-    sendMessage();
-  }
-});
-
-function sendMessage() {
+// إرسال الرسالة
+async function sendMessage() {
   const text = messageInput.value.trim();
   if (text === "") return;
 
-  const message = {
-    name: name || "مجهول",
-    text: text,
-    time: Date.now(),
-  };
+  const { error } = await supabase.from("Kr0wl").insert([
+    { user: username, text: text }
+  ]);
 
-  push(messagesRef, message);
-  messageInput.value = "";
+  if (!error) {
+    messageInput.value = "";
+  }
 }
 
-// عرض الرسائل عند إضافتها
-onChildAdded(messagesRef, (data) => {
-  const msg = data.val();
-  const msgElement = document.createElement("div");
-  msgElement.innerHTML = `<span style="color:${getColor(msg.name)};">${msg.name}</span>: ${msg.text}`;
-  chat.appendChild(msgElement);
-  chat.scrollTop = chat.scrollHeight;
+sendButton.addEventListener("click", sendMessage);
+messageInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") sendMessage();
 });
 
-// تلوين الأسماء
-function getColor(name) {
+// جلب الرسائل وعرضها
+supabase
+  .from("Kr0wl")
+  .select("*")
+  .order("id", { ascending: true })
+  .then(({ data }) => {
+    data.forEach(msg => {
+      addMessage(msg.user, msg.text);
+    });
+  });
+
+supabase
+  .channel("realtime:Kr0wl")
+  .on("postgres_changes", { event: "INSERT", schema: "public", table: "Kr0wl" }, payload => {
+    const msg = payload.new;
+    addMessage(msg.user, msg.text);
+  })
+  .subscribe();
+
+// عرض الرسالة
+function addMessage(user, text) {
+  const msgElement = document.createElement("div");
+  msgElement.textContent = `${user}: ${text}`;
+  msgElement.style.color = getColorForName(user);
+  chat.appendChild(msgElement);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function getColorForName(name) {
   let hash = 0;
   for (let i = 0; i < name.length; i++) {
     hash = name.charCodeAt(i) + ((hash << 5) - hash);
   }
-  const color = `hsl(${hash % 360}, 100%, 70%)`;
-  return color;
+  const hue = hash % 360;
+  return `hsl(${hue}, 100%, 70%)`;
 }
+
+document.getElementById("logout").addEventListener("click", () => {
+  sessionStorage.clear();
+  location.href = "index.html";
+});
