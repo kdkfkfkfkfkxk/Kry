@@ -54,7 +54,6 @@ button:hover {
   100% { opacity: 1; }
 }
 
-/* خلفية متحركة بسيطة */
 body::before {
   content: '';
   position: absolute;
