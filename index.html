@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>تسجيل الدخول - Kr0wl Chat</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div class="container">
+    <h1 id="typing-title"></h1>
+    <div class="login-box">
+      <input type="text" id="username" placeholder="الاسم" required />
+      <input type="password" id="password" placeholder="كلمة المرور" required />
+      <input type="password" id="confirm" placeholder="تأكيد كلمة المرور" required />
+      <div class="captcha">
+        <span id="question"></span>
+        <input type="text" id="captcha" placeholder="الإجابة" required />
+      </div>
+      <button onclick="validate()">دخول</button>
+      <p id="error"></p>
+    </div>
+  </div>
+
+  <script src="login.js"></script>
+</body>
+</html>
