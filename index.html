@@ -1,56 +1,27 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Kr0wl Chat</title>
-  <style>
-    body {
-      background-color: #111;
-      color: #0fffcf;
-      font-family: monospace;
-      text-align: center;
-    }
-    #chat-container {
-      max-width: 600px;
-      margin: 30px auto;
-      border: 1px solid #555;
-      padding: 10px;
-      background-color: #1b1b1b;
-    }
-    #messages {
-      height: 300px;
-      overflow-y: auto;
-      background: #222;
-      padding: 10px;
-      margin-bottom: 10px;
-      text-align: left;
-      direction: rtl;
-    }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-      margin: 5px;
-    }
-    #input-container {
-      display: flex;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .msg {
-      margin: 5px 0;
-    }
-  </style>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
 </head>
 <body>
-  <h1>محادثة <span style="color: #00ffaa;">Kr0wl</span> العامة</h1>
-  <div id="chat-container">
+  <div id="login-container">
+    <h2>تسجيل الدخول</h2>
+    <input type="text" id="username" placeholder="الاسم">
+    <input type="password" id="password" placeholder="كلمة السر">
+    <button onclick="register()">دخول</button>
+  </div>
+
+  <div id="chat-container" class="hidden">
+    <h2>محادثة <span class="hacker">Kr0wl</span> العامة</h2>
+    <button onclick="logout()">خروج</button>
     <div id="messages"></div>
-    <div id="input-container">
-      <input id="message-input" placeholder="اكتب رسالتك..." />
-      <button onclick="sendMessage()">إرسال</button>
-    </div>
+    <input type="text" id="message-input" placeholder="اكتب رسالتك...">
+    <button onclick="sendMessage()">إرسال</button>
   </div>
 
   <script src="chat.js"></script>
