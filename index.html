@@ -1,64 +1,75 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8">
-  <title>دردشة Kr0wl</title>
+  <title>Kr0wl Chat</title>
   <style>
-    body { background-color: #111; color: #fff; font-family: Tahoma; text-align: center; padding: 50px; }
-    input { padding: 10px; margin: 10px; border-radius: 5px; border: none; width: 200px; }
-    button { padding: 10px 20px; background: #0ff; border: none; border-radius: 5px; cursor: pointer; }
-    .box { background: #222; padding: 30px; border-radius: 10px; display: inline-block; }
+    body {
+      font-family: sans-serif;
+      background: #0d0d0d;
+      color: #fff;
+      text-align: center;
+      padding: 20px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+    }
+    #messages {
+      background: #1a1a1a;
+      border-radius: 10px;
+      padding: 10px;
+      height: 300px;
+      overflow-y: auto;
+      margin-top: 20px;
+      text-align: right;
+    }
+    .hidden { display: none; }
+    .username { font-weight: bold; }
+    .exit-button {
+      background-color: #e63946;
+      color: white;
+      margin-top: 15px;
+    }
   </style>
 </head>
 <body>
-  <div class="box">
-    <h2>أهلاً بك في دردشة Kr0wl</h2>
-    <input type="text" id="username" placeholder="اكتب اسمك"><br>
+
+  <div id="login-container">
+    <h2>تسجيل الدخول</h2>
+    <input type="text" id="username" placeholder="اسم المستخدم"><br>
     <input type="password" id="password" placeholder="كلمة السر"><br>
-    <div id="captcha-box"></div>
-    <input type="text" id="captcha-answer" placeholder="أدخل ناتج العملية"><br>
-    <button onclick="login()">دخول</button>
-    <p id="error" style="color: red;"></p>
+    <button onclick="register()">دخول</button>
   </div>
 
+  <div id="chat-container" class="hidden">
+    <h3 id="user-name"></h3>
+    <div id="messages"></div>
+    <input type="text" id="message-input" placeholder="اكتب رسالتك هنا">
+    <button onclick="sendMessage()">إرسال</button><br>
+    <button onclick="logout()" class="exit-button">خروج</button>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
   <script>
-    const correctPassword = "kr0wldz21";
-    let captchaResult = 0;
-
-    function generateCaptcha() {
-      const num1 = Math.floor(Math.random() * 10) + 1;
-      const num2 = Math.floor(Math.random() * 10) + 1;
-      captchaResult = num1 + num2;
-      document.getElementById("captcha-box").innerHTML = `<p>كم ناتج ${num1} + ${num2} ؟</p>`;
-    }
-
-    function login() {
-      const username = document.getElementById("username").value.trim();
-      const password = document.getElementById("password").value;
-      const captchaInput = parseInt(document.getElementById("captcha-answer").value);
-
-      if (username === "" || password === "") {
-        document.getElementById("error").textContent = "الرجاء ملء جميع الحقول.";
-        return;
-      }
-
-      if (password !== correctPassword) {
-        document.getElementById("error").textContent = "كلمة السر غير صحيحة.";
-        return;
-      }
-
-      if (captchaInput !== captchaResult) {
-        document.getElementById("error").textContent = "إجابة الكابتشا غير صحيحة.";
-        generateCaptcha();
-        return;
-      }
-
-      // حفظ الاسم مؤقتاً
-      sessionStorage.setItem("username", username);
-      window.location.href = "chat.html";
-    }
-
-    window.onload = generateCaptcha;
+    const firebaseConfig = {
+      apiKey: "AIzaSyCKiHADVuRqq1Mse2h2ohDeKLM9_rvmrhY",
+      authDomain: "kr0wl-chat.firebaseapp.com",
+      projectId: "kr0wl-chat",
+      storageBucket: "kr0wl-chat.appspot.com",
+      messagingSenderId: "941342507383",
+      appId: "1:941342507383:web:50d6c755abe6aef1066172",
+      measurementId: "G-WZ8NME39V7"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
   </script>
+
+  <!-- سكربت الدردشة -->
+  <script src="chat.js"></script>
 </body>
 </html>
