@@ -1,46 +1,59 @@
-let firstNumber, secondNumber;
-
 function generateCaptcha() {
-  firstNumber = Math.floor(Math.random() * 10) + 1;
-  secondNumber = Math.floor(Math.random() * 10) + 1;
-  document.getElementById('captcha').innerText = `كم ناتج ${firstNumber} + ${secondNumber} ؟`;
+  const num1 = Math.floor(Math.random() * 10) + 1;
+  const num2 = Math.floor(Math.random() * 10) + 1;
+  window.captchaAnswer = num1 + num2;
+  document.getElementById("captchaQuestion").innerText = `ما ناتج ${num1} + ${num2} ؟`;
 }
 
 function register() {
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value;
-  const confirmPassword = document.getElementById("confirmPassword").value;
-  const captchaInput = document.getElementById("captchaInput").value;
-  const error = document.getElementById("error");
+  const user = document.getElementById("username").value.trim();
+  const pass = document.getElementById("password").value;
+  const confirm = document.getElementById("confirmPassword").value;
+  const captcha = document.getElementById("captchaInput").value;
 
-  // تحقق من الحقول
-  if (!username || !password || !confirmPassword || !captchaInput) {
-    error.textContent = "يرجى ملء جميع الحقول.";
+  if (!user || !pass || !confirm || !captcha) {
+    alert("الرجاء ملء جميع الحقول");
     return;
   }
 
-  // تحقق من كلمة المرور
-  const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
-  if (!strongPassword.test(password)) {
-    error.textContent = "كلمة المرور ضعيفة. يجب أن تحتوي على حروف صغيرة وكبيرة وأرقام ورموز.";
+  if (pass !== confirm) {
+    alert("كلمتا المرور غير متطابقتين");
     return;
   }
 
-  if (password !== confirmPassword) {
-    error.textContent = "كلمتا المرور غير متطابقتين.";
+  if (parseInt(captcha) !== window.captchaAnswer) {
+    alert("إجابة الكابتشا خاطئة");
+    generateCaptcha();
     return;
   }
 
-  // تحقق من الكابتشا
-  if (parseInt(captchaInput) !== (firstNumber + secondNumber)) {
-    error.textContent = "إجابة الكابتشا غير صحيحة.";
-    generateCaptcha(); // إعادة توليد الكابتشا
-    return;
-  }
-
-  // إذا مر كل شيء
-  alert(`مرحباً ${username}! تم تسجيل الدخول بنجاح.`);
-  error.textContent = "";
+  alert("تم الدخول بنجاح (يمكنك الآن تحويله للدردشة)");
+  // هنا يمكن تحويل المستخدم لصفحة المحادثة
 }
 
-generateCaptcha(); // توليد أول كابتشا عند التشغيل
+window.onload = () => {
+  generateCaptcha();
+  typeWriterEffect();
+};
+
+function typeWriterEffect() {
+  const title = document.getElementById("title");
+  const text = "Kr0wl Chat";
+  let i = 0;
+
+  function write() {
+    if (i < text.length) {
+      title.textContent += text.charAt(i);
+      i++;
+      setTimeout(write, 150);
+    } else {
+      setTimeout(() => {
+        title.textContent = "";
+        i = 0;
+        write();
+      }, 2000);
+    }
+  }
+
+  write();
+}
