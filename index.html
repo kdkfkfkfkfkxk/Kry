@@ -2,23 +2,24 @@
 <html lang="ar">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Kr0wl Chat</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <div class="title-container">
-    <h1 id="animated-title">Kr0wl Chat</h1>
-  </div>
+  <div class="container">
+    <h1 class="typewriter" id="title"></h1>
 
-  <div class="login-container">
-    <input type="text" id="username" placeholder="اسم المستخدم" />
+    <input type="text" id="username" placeholder="Kr0wl" />
     <input type="password" id="password" placeholder="كلمة المرور" />
     <input type="password" id="confirmPassword" placeholder="تأكيد كلمة المرور" />
-    <div id="captcha"></div>
-    <input type="text" id="captchaInput" placeholder="أدخل ناتج العملية" />
+    
+    <div id="captchaBox">
+      <span id="captchaQuestion"></span>
+      <input type="text" id="captchaInput" placeholder="أدخل ناتج العملية" />
+    </div>
+
     <button onclick="register()">دخول</button>
-    <p id="error"></p>
   </div>
 
   <script src="script.js"></script>
