@@ -1,105 +1,66 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Kr0wl Chat</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <div id="login-container">
-    <h2>تسجيل الدخول</h2>
-    <input type="text" id="username" placeholder="اسم المستخدم" />
-    <input type="password" id="password" placeholder="كلمة المرور" />
-    <button onclick="login()">دخول</button>
-  </div>
+let username = "";
+const colors = {};
 
-  <div id="chat-container" class="hidden">
-    <div id="chat-header">
-      <h2>محادثة Kr0wl العامة</h2>
-      <span id="user-name"></span>
-      <button onclick="logout()" style="background:#f33; color:white; margin-right: 10px;">خروج</button>
-    </div>
-    <div id="messages"></div>
-    <input type="text" id="message-input" placeholder="اكتب رسالتك..." />
-    <button onclick="sendMessage()">إرسال</button>
-  </div>
+function register() {
+  const name = document.getElementById("username").value.trim();
+  const pass = document.getElementById("password").value.trim();
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-  <script src="firebase.js"></script>
+  if (!name || !pass) return alert("اكتب اسمك وكلمة السر");
+  if (pass !== "kr0wldz21") return alert("كلمة المرور غير صحيحة");
 
-  <script>
-    const colors = {};
-    let username = "";
+  username = name;
+  document.getElementById("login-container").classList.add("hidden");
+  document.getElementById("chat-container").classList.remove("hidden");
+  document.getElementById("user-name").innerText = "أهلاً، " + username;
 
-    // تحقق من الجلسة
-    if (sessionStorage.getItem("username")) {
-      username = sessionStorage.getItem("username");
-      showChat();
-    }
+  listenMessages();
+}
 
-    function login() {
-      const name = document.getElementById("username").value.trim();
-      const pass = document.getElementById("password").value.trim();
+function sendMessage() {
+  const text = document.getElementById("message-input").value.trim();
+  if (!text) return;
 
-      if (!name || !pass) return alert("يرجى إدخال الاسم وكلمة المرور");
-      if (pass !== "kr0wldz21") return alert("كلمة المرور غير صحيحة");
+  db.collection("messages").add({
+    user: username,
+    text: text,
+    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+  });
 
-      username = name;
-      sessionStorage.setItem("username", username);
-      showChat();
-    }
+  document.getElementById("message-input").value = "";
+}
 
-    function showChat() {
-      document.getElementById("login-container").classList.add("hidden");
-      document.getElementById("chat-container").classList.remove("hidden");
-      document.getElementById("user-name").innerText = "أهلاً، " + username;
-      listenMessages();
-    }
+function listenMessages() {
+  db.collection("messages")
+    .orderBy("timestamp")
+    .onSnapshot(snapshot => {
+      const msgContainer = document.getElementById("messages");
+      msgContainer.innerHTML = "";
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const color = colors[data.user] || (colors[data.user] = getRandomColor());
 
-    function sendMessage() {
-      const text = document.getElementById("message-input").value;
-      if (!text) return;
-
-      db.collection("messages").add({
-        user: username,
-        text: text,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        const div = document.createElement("div");
+        div.innerHTML = `<span class="username" style="color:${color}">${data.user}:</span> ${data.text}`;
+        msgContainer.appendChild(div);
       });
+      msgContainer.scrollTop = msgContainer.scrollHeight;
+    });
+}
 
-      document.getElementById("message-input").value = "";
-    }
+function logout() {
+  location.reload(); // يرجعك لصفحة الدخول
+}
 
-    function listenMessages() {
-      db.collection("messages")
-        .orderBy("timestamp")
-        .onSnapshot(snapshot => {
-          const messagesDiv = document.getElementById("messages");
-          messagesDiv.innerHTML = "";
-          snapshot.forEach(doc => {
-            const data = doc.data();
-            const color = colors[data.user] || (colors[data.user] = getRandomColor());
-            const div = document.createElement("div");
-            div.innerHTML = `<span class="username" style="color:${color}">${data.user}:</span> ${data.text}`;
-            messagesDiv.appendChild(div);
-          });
-          messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        });
-    }
+function getRandomColor() {
+  const letters = '0123456789ABCDEF';
+  let color = '#';
+  for (let i = 0; i < 6; i++) color += letters[Math.floor(Math.random() * 16)];
+  return color;
+}
 
-    function getRandomColor() {
-      const letters = '0123456789ABCDEF';
-      let color = '#';
-      for (let i = 0; i < 6; i++) color += letters[Math.floor(Math.random() * 16)];
-      return color;
-    }
-
-    function logout() {
-      sessionStorage.removeItem("username");
-      location.reload();
-    }
-  </script>
-</body>
-</html>
+function generateCaptcha() {
+  const a = Math.floor(Math.random() * 10), b = Math.floor(Math.random() * 10);
+  document.getElementById("captcha-question").innerText = `${a} + ${b} = ؟`;
+  window.captchaResult = a + b;
+}
+generateCaptcha();
