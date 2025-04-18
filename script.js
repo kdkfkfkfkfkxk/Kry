@@ -1,75 +1,46 @@
-function generateCaptcha() {
-  const canvas = document.getElementById("captchaCanvas");
-  const ctx = canvas.getContext("2d");
-  ctx.fillStyle = "#000";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-  ctx.font = "20px monospace";
-  ctx.fillStyle = "#0f0";
-  const captcha = Math.random().toString(36).substring(2, 8);
-  ctx.fillText(captcha, 10, 25);
-  canvas.dataset.captcha = captcha;
-}
+let firstNumber, secondNumber;
 
-function validatePassword(password) {
-  return /[a-z]/.test(password) &&
-         /[A-Z]/.test(password) &&
-         /[0-9]/.test(password) &&
-         /[^A-Za-z0-9]/.test(password) &&
-         password.length >= 6;
+function generateCaptcha() {
+  firstNumber = Math.floor(Math.random() * 10) + 1;
+  secondNumber = Math.floor(Math.random() * 10) + 1;
+  document.getElementById('captcha').innerText = `كم ناتج ${firstNumber} + ${secondNumber} ؟`;
 }
 
 function register() {
-  const user = document.getElementById("username").value.trim();
-  const pass = document.getElementById("password").value;
-  const confirm = document.getElementById("confirmPassword").value;
-  const captchaInput = document.getElementById("captchaInput").value.trim();
-  const captcha = document.getElementById("captchaCanvas").dataset.captcha;
-  const error = document.getElementById("registerError");
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
+  const captchaInput = document.getElementById("captchaInput").value;
+  const error = document.getElementById("error");
 
-  if (!user || !pass || !confirm || !captchaInput) {
-    error.textContent = "يرجى تعبئة جميع الحقول";
-    return;
-  }
-  if (pass !== confirm) {
-    error.textContent = "كلمتا المرور غير متطابقتين";
-    return;
-  }
-  if (!validatePassword(pass)) {
-    error.textContent = "كلمة المرور ضعيفة، يجب أن تحتوي على حروف وأرقام ورموز";
-    return;
-  }
-  if (captchaInput !== captcha) {
-    error.textContent = "الكابتشا غير صحيحة";
-    generateCaptcha();
+  // تحقق من الحقول
+  if (!username || !password || !confirmPassword || !captchaInput) {
+    error.textContent = "يرجى ملء جميع الحقول.";
     return;
   }
 
-  // success
-  document.getElementById("register-container").classList.add("hidden");
-  document.getElementById("chat-container").classList.remove("hidden");
-  document.getElementById("userDisplay").textContent = user;
-  startChat(user);
+  // تحقق من كلمة المرور
+  const strongPassword = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}$/;
+  if (!strongPassword.test(password)) {
+    error.textContent = "كلمة المرور ضعيفة. يجب أن تحتوي على حروف صغيرة وكبيرة وأرقام ورموز.";
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    error.textContent = "كلمتا المرور غير متطابقتين.";
+    return;
+  }
+
+  // تحقق من الكابتشا
+  if (parseInt(captchaInput) !== (firstNumber + secondNumber)) {
+    error.textContent = "إجابة الكابتشا غير صحيحة.";
+    generateCaptcha(); // إعادة توليد الكابتشا
+    return;
+  }
+
+  // إذا مر كل شيء
+  alert(`مرحباً ${username}! تم تسجيل الدخول بنجاح.`);
+  error.textContent = "";
 }
 
-function startChat(username) {
-  const messagesDiv = document.getElementById("messages");
-  const input = document.getElementById("messageInput");
-
-  db.ref("messages").on("child_added", (snapshot) => {
-    const msg = snapshot.val();
-    const p = document.createElement("p");
-    p.innerHTML = `<strong>${msg.user}:</strong> ${msg.text}`;
-    messagesDiv.appendChild(p);
-    messagesDiv.scrollTop = messagesDiv.scrollHeight;
-  });
-
-  window.sendMessage = function () {
-    const text = input.value.trim();
-    if (text) {
-      db.ref("messages").push({ user: username, text });
-      input.value = "";
-    }
-  };
-}
-
-window.onload = generateCaptcha;
+generateCaptcha(); // توليد أول كابتشا عند التشغيل
