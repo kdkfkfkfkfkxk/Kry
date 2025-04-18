@@ -20,15 +20,18 @@ const chatRef = ref(db, "darkchat");
 
 const nickname = sessionStorage.getItem("nickname");
 if (!nickname) location.href = "index.html";
+
 document.getElementById("nickname-display").textContent = "مرحباً، " + nickname;
 
-// مفتاح تشفير بسيط
+// مفتاح تشفير
 const secretKey = "kr0wlSecret";
 
+// إرسال الرسالة عند الضغط على Enter
 document.getElementById("message").addEventListener("keypress", (e) => {
   if (e.key === "Enter") sendMessage();
 });
 
+// إرسال الرسالة
 function sendMessage() {
   const input = document.getElementById("message");
   const raw = input.value.trim();
@@ -45,6 +48,7 @@ function sendMessage() {
   input.value = "";
 }
 
+// الاستماع للرسائل الجديدة
 onValue(chatRef, (snapshot) => {
   const msgBox = document.getElementById("messages");
   msgBox.innerHTML = "";
@@ -58,15 +62,20 @@ onValue(chatRef, (snapshot) => {
         const div = document.createElement("div");
         div.innerHTML = `<b style="color:lime">${msg.user}:</b> ${decrypted}`;
         msgBox.appendChild(div);
-      } catch {
-        // تجاهل الرسائل المشفرة بمفتاح خاطئ
+      } catch (err) {
+        console.warn("رسالة غير قابلة للفك");
       }
     });
     msgBox.scrollTop = msgBox.scrollHeight;
   }
 });
 
-export function logout() {
+// الخروج من المحادثة
+function logout() {
   sessionStorage.clear();
   location.href = "index.html";
 }
+
+// ربط الدوال بالأزرار
+window.sendMessage = sendMessage;
+window.logout = logout;
